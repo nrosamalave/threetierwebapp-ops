@@ -41,3 +41,45 @@ resource "aws_subnet" "private_db_subnets" {
    Name = "my-private-db-subnet-${count.index + 1}"
  }
 }
+
+# Route Tables 
+resource "aws_route_table" "my-public-web-route-table" {    //public-web rt
+  vpc_id = aws_vpc.my-vpc.id
+
+  tags = {
+    Name = "my-public-web-route-table"
+  }
+}
+
+resource "aws_route_table" "my-private-app-route-table" {   //private-app rt
+  vpc_id = aws_vpc.my-vpc.id
+
+  tags = {
+    Name = "my-private-app-route-table"
+  }
+}
+
+resource "aws_route_table" "my-private-db-route-table" {    //private-db rt
+  vpc_id = aws_vpc.my-vpc.id
+
+  tags = {
+    Name = "my-private-db-route-table"
+  }
+}
+
+# Route Table Associations 
+
+resource "aws_route_table_association" "public-web-rt-association" {
+  subnet_id      = aws_subnet.public_web_subnets.id
+  route_table_id = aws_route_table.my-public-web-route-table.id
+}
+
+resource "aws_route_table_association" "private-app-rt-association" {
+  subnet_id      = aws_subnet.private_app_subnets.id
+  route_table_id = aws_route_table.my-private-app-route-table.id
+}
+
+resource "aws_route_table_association" "private-db-rt-association" {
+  subnet_id      = aws_subnet.private_db_subnets.id
+  route_table_id = aws_route_table.my-private-db-route-table.id
+}
