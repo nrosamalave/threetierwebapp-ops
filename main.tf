@@ -70,7 +70,7 @@ resource "aws_route_table" "my-private-db-route-table" {    //private-db rt
 # Route Table Associations 
 
 resource "aws_route_table_association" "public-web-rt-association" {
-  subnet_id      = aws_subnet.public_web_subnets[count.index].id
+  subnet_id      = element(aws_subnet.public_web_subnets.id, count.index)
   route_table_id = aws_route_table.my-public-web-route-table.id
 }
 
