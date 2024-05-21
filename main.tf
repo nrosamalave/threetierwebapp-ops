@@ -70,16 +70,19 @@ resource "aws_route_table" "my-private-db-route-table" {    //private-db rt
 # Route Table Associations 
 
 resource "aws_route_table_association" "public-web-rt-association" {
-  subnet_id      = element(aws_subnet.public_web_subnets.id, count.index)
+  count          = length(var.public_subnet_cidrs_web)
+  subnet_id      = element(aws_subnet.public_web_subnets[*].id, count.index)
   route_table_id = aws_route_table.my-public-web-route-table.id
 }
 
 resource "aws_route_table_association" "private-app-rt-association" {
-  subnet_id      = aws_subnet.private_app_subnets[count.index].id
+  count          = length(var.private_subnet_cidrs_app)
+  subnet_id      = element(aws_subnet.private_app_subnets[*].id, count.index)
   route_table_id = aws_route_table.my-private-app-route-table.id
 }
 
 resource "aws_route_table_association" "private-db-rt-association" {
-  subnet_id      = aws_subnet.private_db_subnets[count.index].id
+  count          = length(var.private_subnet_cidrs_db)
+  subnet_id      = element(aws_subnet.private_db_subnets[*].id, count.index)
   route_table_id = aws_route_table.my-private-db-route-table.id
 }
