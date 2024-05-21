@@ -7,7 +7,7 @@ resource "aws_vpc" "this" {
 resource "aws_subnet" "this" {
   for_each = { 
     for az, subnet_info in local.subnets : 
-    "${az}-${subnet_name}" => {
+    "${az}-${subnet_info.key}" => {
       for subnet_name, cidr_block in subnet_info : 
         subnet_name => {
           cidr_block        = cidr_block
@@ -34,7 +34,7 @@ resource "aws_route_table" "this" {
 
 # Route definition
 resource "aws_route" "this" {
-  for_each = local.route_tables
+  for_each = toset(local.route_tables)
   route_table_id         = aws_route_table.this[each.key].id
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.this.id
