@@ -7,9 +7,8 @@ resource "aws_vpc" "my-project-vpc" {
 
 # Subnets
 resource "aws_subnet" "my-public-web-subnet" {
-  for_each          = local.subnet.cidr
+  for_each          = local.subnet
   vpc_id            = aws_vpc.my-project-vpc[each.key].id
-  cidr_block        = each.value
-  for_each          = local.subnet.availability_zones
-  availability_zone = each.value
+  cidr_block        = each.value.cidr
+  availability_zone = each.value.availability_zones
 }
