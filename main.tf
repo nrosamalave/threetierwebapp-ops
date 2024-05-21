@@ -49,7 +49,7 @@ resource "aws_internet_gateway" "this" {
 resource "aws_route_table_association" "this" {
   for_each = { 
     for az, subnet_info in local.subnets : 
-    "${az}-${subnet_name}" => {
+    "${az}-subnet_name" => {
       for subnet_name, _ in subnet_info : 
         subnet_name => {
           subnet_id      = aws_subnet.this["${az}-${subnet_name}"].id
