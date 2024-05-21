@@ -45,3 +45,11 @@ variable "private_subnet_cidrs_db" {
  description = "Private DB Subnet CIDR values"
  default     = ["172.20.7.0/24", "172.20.8.0/24", "172.20.9.0/24"]
 }
+
+# Availability Zones
+
+variable "azs" {
+  type = string(list)
+  description = "Availability Zones"
+  default = ["us-east-1a", "us-east-1b", "us-east-1c"]
+}
