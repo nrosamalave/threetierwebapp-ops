@@ -31,27 +31,27 @@ resource "aws_subnet" "public_web_subnets" {
   }
 }
  
-resource "aws_subnet" "private_app_subnets" {
- count             = length(var.private_subnet_cidrs_app)
- vpc_id            = aws_vpc.my-vpc.id
- cidr_block        = element(var.private_subnet_cidrs_app, count.index)
- availability_zone = element(var.azs, count.index)
- 
- tags = {
-   Name = "my-private-app-subnet-${count.index + 1}"
- }
-}
+#resource "aws_subnet" "private_app_subnets" {
+# count             = length(var.private_subnet_cidrs_app)
+# vpc_id            = aws_vpc.my-vpc.id
+# cidr_block        = element(var.private_subnet_cidrs_app, count.index)
+# availability_zone = element(var.azs, count.index)
+# 
+# tags = {
+#   Name = "my-private-app-subnet-${count.index + 1}"
+# }
+#}
 
-resource "aws_subnet" "private_db_subnets" {
- count             = length(var.private_subnet_cidrs_db)
- vpc_id            = aws_vpc.my-vpc.id
- cidr_block        = element(var.private_subnet_cidrs_db, count.index)
- availability_zone = element(var.azs, count.index)
- 
- tags = {
-   Name = "my-private-db-subnet-${count.index + 1}"
- }
-}
+#resource "aws_subnet" "private_db_subnets" {
+# count             = length(var.private_subnet_cidrs_db)
+# vpc_id            = aws_vpc.my-vpc.id
+# cidr_block        = element(var.private_subnet_cidrs_db, count.index)
+# availability_zone = element(var.azs, count.index)
+# 
+# tags = {
+#   Name = "my-private-db-subnet-${count.index + 1}"
+# }
+#}
 
 # Route Tables 
 resource "aws_route_table" "my-public-web-route-table" {    //public-web rt
@@ -62,38 +62,44 @@ resource "aws_route_table" "my-public-web-route-table" {    //public-web rt
   }
 }
 
-resource "aws_route_table" "my-private-app-route-table" {   //private-app rt
-  vpc_id = aws_vpc.my-vpc.id
+#resource "aws_route_table" "my-private-app-route-table" {   //private-app rt
+# vpc_id = aws_vpc.my-vpc.id
+#
+#  tags = {
+#    Name = "my-private-app-route-table"
+#  }
+#}
 
-  tags = {
-    Name = "my-private-app-route-table"
-  }
-}
-
-resource "aws_route_table" "my-private-db-route-table" {    //private-db rt
-  vpc_id = aws_vpc.my-vpc.id
-
-  tags = {
-    Name = "my-private-db-route-table"
-  }
-}
+#resource "aws_route_table" "my-private-db-route-table" {    //private-db rt
+#  vpc_id = aws_vpc.my-vpc.id
+#
+#  tags = {
+#    Name = "my-private-db-route-table"
+#  }
+#}
 
 # Route Table Associations 
 
-resource "aws_route_table_association" "public-web-rt-association" {
-  count          = length(var.public_subnet_cidrs_web)
-  subnet_id      = element(aws_subnet.public_web_subnets[*].id, count.index)
+#resource "aws_route_table_association" "public-web-rt-association" {
+#  count          = length(var.public_subnet_cidrs_web)
+#  subnet_id      = element(aws_subnet.public_web_subnets[*].id, count.index)
+#  route_table_id = aws_route_table.my-public-web-route-table.id
+#}
+
+resource "aws_route_table_association" "public_web-rt-association" {
+  for_each      = aws_subnet.public_web_subnets
+  subnet_id     = each.value.id
   route_table_id = aws_route_table.my-public-web-route-table.id
 }
 
-resource "aws_route_table_association" "private-app-rt-association" {
-  count          = length(var.private_subnet_cidrs_app)
-  subnet_id      = element(aws_subnet.private_app_subnets[*].id, count.index)
-  route_table_id = aws_route_table.my-private-app-route-table.id
-}
+#resource "aws_route_table_association" "private-app-rt-association" {
+#  count          = length(var.private_subnet_cidrs_app)
+#  subnet_id      = element(aws_subnet.private_app_subnets[*].id, count.index)
+#  route_table_id = aws_route_table.my-private-app-route-table.id
+#}
 
-resource "aws_route_table_association" "private-db-rt-association" {
-  count          = length(var.private_subnet_cidrs_db)
-  subnet_id      = element(aws_subnet.private_db_subnets[*].id, count.index)
-  route_table_id = aws_route_table.my-private-db-route-table.id
-}
+#resource "aws_route_table_association" "private-db-rt-association" {
+#  count          = length(var.private_subnet_cidrs_db)
+#  subnet_id      = element(aws_subnet.private_db_subnets[*].id, count.index)
+#  route_table_id = aws_route_table.my-private-db-route-table.id
+#}
