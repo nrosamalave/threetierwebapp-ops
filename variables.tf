@@ -49,7 +49,7 @@ variable "private_subnet_cidrs_db" {
 # Availability Zones
 
 variable "azs" {
-  type = string(list)
+  type = list(string)
   description = "Availability Zones"
   default = ["us-east-1a", "us-east-1b", "us-east-1c"]
 }
