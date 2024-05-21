@@ -42,7 +42,7 @@ resource "aws_route_table_association" "this" {
     for s in local.flattened_subnets :
     "${s.az}-${s.name}" => {
       subnet_id = aws_subnet.this[s.key].id
-      route_table_id = aws_route_table.this[substring(s.name, 7, length(s.name))].id
+      route_table_id = aws_route_table.this[split(s.name, "_")[1]].id
     }
   }
   subnet_id      = each.value.subnet_id
