@@ -19,6 +19,13 @@ variable "region" {
   }
 }
 
+# VPC Variables
+
+variable "vpc_cidr" {
+  description = "Cidr for the vpc"
+  default = "172.20.0.0/20"
+}
+
 # Subnet Variables
 
 variable "public_subnet_cidrs_web" {

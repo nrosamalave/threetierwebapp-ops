@@ -1,7 +1,6 @@
 #VPC 
 resource "aws_vpc" "my-vpc" {
-  for_each         = local.vpc_cidr
-  cidr_block       = each.value
+  cidr_block       = var.vpc_cidr
   instance_tenancy = "default"
 
   tags = {
