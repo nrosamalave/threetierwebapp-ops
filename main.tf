@@ -9,15 +9,26 @@ resource "aws_vpc" "my-vpc" {
 }
 
 #Subnets
+#resource "aws_subnet" "public_web_subnets" {
+# count             = length(var.public_subnet_cidrs_web)
+# vpc_id            = aws_vpc.my-vpc.id
+# cidr_block        = element(var.public_subnet_cidrs_web, count.index)
+# availability_zone = element(var.azs, count.index)
+# 
+# tags = {
+#   Name = "my-public-web-subnet-${count.index + 1}"
+# }
+#}
+
 resource "aws_subnet" "public_web_subnets" {
- count             = length(var.public_subnet_cidrs_web)
- vpc_id            = aws_vpc.my-vpc.id
- cidr_block        = element(var.public_subnet_cidrs_web, count.index)
- availability_zone = element(var.azs, count.index)
- 
- tags = {
-   Name = "my-public-web-subnet-${count.index + 1}"
- }
+  for_each          = { for idx, subnet in var.public_subnet_cidrs_web : idx => subnet }
+  vpc_id            = aws_vpc.my-vpc.id
+  cidr_block        = each.value.cidr_block
+  availability_zone = each.value.availability_zone
+
+  tags = {
+    Name = "public-subnet-${each.key}"
+  }
 }
  
 resource "aws_subnet" "private_app_subnets" {

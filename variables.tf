@@ -28,22 +28,36 @@ variable "vpc_cidr" {
 
 # Subnet Variables
 
-variable "public_subnet_cidrs_web" {
- type        = list(string)
- description = "Public Web Subnet CIDR values"
- default     = ["172.20.1.0/24", "172.20.2.0/24", "172.20.3.0/24"]
-}
+#variable "public_subnet_cidrs_web" {
+# type        = list(string)
+# description = "Public Web Subnet CIDR values"
+# default     = ["172.20.1.0/24", "172.20.2.0/24", "172.20.3.0/24"]
+#}
  
-variable "private_subnet_cidrs_app" {
- type        = list(string)
- description = "Private App Subnet CIDR values"
- default     = ["172.20.4.0/24", "172.20.5.0/24", "172.20.6.0/24"]
-}
+#variable "private_subnet_cidrs_app" {
+# type        = list(string)
+# description = "Private App Subnet CIDR values"
+# default     = ["172.20.4.0/24", "172.20.5.0/24", "172.20.6.0/24"]
+#}
 
-variable "private_subnet_cidrs_db" {
- type        = list(string)
- description = "Private DB Subnet CIDR values"
- default     = ["172.20.7.0/24", "172.20.8.0/24", "172.20.9.0/24"]
+#variable "private_subnet_cidrs_db" {
+# type        = list(string)
+# description = "Private DB Subnet CIDR values"
+# default     = ["172.20.7.0/24", "172.20.8.0/24", "172.20.9.0/24"]
+#}
+
+# Subnet Variables 2
+
+variable "public_subnet_cidrs_web" {
+  type = list(object({
+    cidr_block        = string
+    availability_zone = string
+  }))
+  default = [
+    { cidr_block = "172.20.1.0/24", availability_zone = "us-east-1a" },
+    { cidr_block = "172.20.2.0/24", availability_zone = "us-east-1b" },
+    { cidr_block = "172.20.3.0/24", availability_zone = "us-east-1c" }
+  ]
 }
 
 # Availability Zones
