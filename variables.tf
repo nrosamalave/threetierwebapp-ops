@@ -39,3 +39,9 @@ variable "private_subnet_cidrs_app" {
  description = "Private App Subnet CIDR values"
  default     = ["172.20.4.0/24", "172.20.5.0/24", "172.20.6.0/24"]
 }
+
+variable "private_subnet_cidrs_db" {
+ type        = list(string)
+ description = "Private DB Subnet CIDR values"
+ default     = ["172.20.7.0/24", "172.20.8.0/24", "172.20.9.0/24"]
+}
