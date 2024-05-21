@@ -1,6 +1,6 @@
 locals {
   vpc_cidr_block = "10.0.0.0/16"
-  
+
   subnets = {
     "us-east-1a" = {
       private_db_subnet  = "10.0.1.0/24"
@@ -18,6 +18,6 @@ locals {
       private_app_subnet = "10.0.9.0/24"
     }
   }
-  
+
   route_tables = ["web", "db", "app"]
 }

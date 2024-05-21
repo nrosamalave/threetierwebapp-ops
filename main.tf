@@ -7,8 +7,7 @@ resource "aws_vpc" "this" {
 resource "aws_subnet" "this" {
   for_each = { 
     for az, subnet_info in local.subnets : 
-    for subnet_name, cidr_block in subnet_info :
-    "${az}-${subnet_name}" => {
+    "${az}-${subnet_info.value.key}" => {
       for subnet_name, cidr_block in subnet_info : 
         subnet_name => {
           cidr_block        = cidr_block
