@@ -12,7 +12,7 @@ resource "aws_vpc" "my-vpc" {
 #Subnets
 resource "aws_subnet" "public_web_subnets" {
  count      = length(var.public_subnet_cidrs_web)
- vpc_id     = aws_vpc.my-vpc.id
+ vpc_id     = aws_vpc.my-vpc[each.key].id
  cidr_block = element(var.public_subnet_cidrs_web, count.index)
  
  tags = {
@@ -22,7 +22,7 @@ resource "aws_subnet" "public_web_subnets" {
  
 resource "aws_subnet" "private_app_subnets" {
  count      = length(var.private_subnet_cidrs_app)
- vpc_id     = aws_vpc.my-vpc.id
+ vpc_id     = aws_vpc.my-vpc[each.key].id
  cidr_block = element(var.private_subnet_cidrs_app, count.index)
  
  tags = {
@@ -32,7 +32,7 @@ resource "aws_subnet" "private_app_subnets" {
 
 resource "aws_subnet" "private_db_subnets" {
  count      = length(var.private_subnet_cidrs_db)
- vpc_id     = aws_vpc.my-vpc.id
+ vpc_id     = aws_vpc.my-vpc[each.key].id
  cidr_block = element(var.private_subnet_cidrs_db, count.index)
  
  tags = {
