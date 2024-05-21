@@ -1,105 +1,62 @@
-#VPC 
-resource "aws_vpc" "my-vpc" {
-  cidr_block       = var.vpc_cidr
-  instance_tenancy = "default"
-
-  tags = {
-   Name = "my-vpc"
- }
+# VPC definition
+resource "aws_vpc" "this" {
+  cidr_block = local.vpc_cidr_block
 }
 
-#Subnets
-#resource "aws_subnet" "public_web_subnets" {
-# count             = length(var.public_subnet_cidrs_web)
-# vpc_id            = aws_vpc.my-vpc.id
-# cidr_block        = element(var.public_subnet_cidrs_web, count.index)
-# availability_zone = element(var.azs, count.index)
-# 
-# tags = {
-#   Name = "my-public-web-subnet-${count.index + 1}"
-# }
-#}
-
-resource "aws_subnet" "public_web_subnets" {
-  for_each          = { for idx, subnet in var.public_subnet_cidrs_web : idx => subnet }
-  vpc_id            = aws_vpc.my-vpc.id
+# Subnet definition
+resource "aws_subnet" "this" {
+  for_each = { 
+    for az, subnet_info in local.subnets : 
+    "${az}-${subnet_name}" => {
+      for subnet_name, cidr_block in subnet_info : 
+        subnet_name => {
+          cidr_block        = cidr_block
+          availability_zone = az
+        }
+    } 
+  }
+  vpc_id            = aws_vpc.this.id
   cidr_block        = each.value.cidr_block
   availability_zone = each.value.availability_zone
-
   tags = {
-    Name = "public-subnet-${each.key}"
-  }
-}
- 
-#resource "aws_subnet" "private_app_subnets" {
-# count             = length(var.private_subnet_cidrs_app)
-# vpc_id            = aws_vpc.my-vpc.id
-# cidr_block        = element(var.private_subnet_cidrs_app, count.index)
-# availability_zone = element(var.azs, count.index)
-# 
-# tags = {
-#   Name = "my-private-app-subnet-${count.index + 1}"
-# }
-#}
-
-#resource "aws_subnet" "private_db_subnets" {
-# count             = length(var.private_subnet_cidrs_db)
-# vpc_id            = aws_vpc.my-vpc.id
-# cidr_block        = element(var.private_subnet_cidrs_db, count.index)
-# availability_zone = element(var.azs, count.index)
-# 
-# tags = {
-#   Name = "my-private-db-subnet-${count.index + 1}"
-# }
-#}
-
-# Route Tables 
-resource "aws_route_table" "my-public-web-route-table" {    //public-web rt
-  vpc_id = aws_vpc.my-vpc.id
-
-  tags = {
-    Name = "my-public-web-route-table"
+    Name = "${each.key}"
   }
 }
 
-#resource "aws_route_table" "my-private-app-route-table" {   //private-app rt
-# vpc_id = aws_vpc.my-vpc.id
-#
-#  tags = {
-#    Name = "my-private-app-route-table"
-#  }
-#}
-
-#resource "aws_route_table" "my-private-db-route-table" {    //private-db rt
-#  vpc_id = aws_vpc.my-vpc.id
-#
-#  tags = {
-#    Name = "my-private-db-route-table"
-#  }
-#}
-
-# Route Table Associations 
-
-#resource "aws_route_table_association" "public-web-rt-association" {
-#  count          = length(var.public_subnet_cidrs_web)
-#  subnet_id      = element(aws_subnet.public_web_subnets[*].id, count.index)
-#  route_table_id = aws_route_table.my-public-web-route-table.id
-#}
-
-resource "aws_route_table_association" "public_web-rt-association" {
-  for_each      = aws_subnet.public_web_subnets
-  subnet_id     = each.value.id
-  route_table_id = aws_route_table.my-public-web-route-table.id
+# Route Table definition
+resource "aws_route_table" "this" {
+  for_each = toset(local.route_tables)
+  vpc_id = aws_vpc.this.id
+  tags = {
+    Name = "${each.key}-route_table"
+  }
 }
 
-#resource "aws_route_table_association" "private-app-rt-association" {
-#  count          = length(var.private_subnet_cidrs_app)
-#  subnet_id      = element(aws_subnet.private_app_subnets[*].id, count.index)
-#  route_table_id = aws_route_table.my-private-app-route-table.id
-#}
+# Route definition
+resource "aws_route" "this" {
+  for_each = local.route_tables
+  route_table_id         = aws_route_table.this[each.key].id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.this.id
+}
 
-#resource "aws_route_table_association" "private-db-rt-association" {
-#  count          = length(var.private_subnet_cidrs_db)
-#  subnet_id      = element(aws_subnet.private_db_subnets[*].id, count.index)
-#  route_table_id = aws_route_table.my-private-db-route-table.id
-#}
+# Internet Gateway definition
+resource "aws_internet_gateway" "this" {
+  vpc_id = aws_vpc.this.id
+}
+
+# Associate Route Tables with Subnets
+resource "aws_route_table_association" "this" {
+  for_each = { 
+    for az, subnet_info in local.subnets : 
+    "${az}-${subnet_name}" => {
+      for subnet_name, _ in subnet_info : 
+        subnet_name => {
+          subnet_id      = aws_subnet.this["${az}-${subnet_name}"].id
+          route_table_id = aws_route_table.this[subnet_name].id
+        }
+    }
+  }
+  subnet_id      = each.value.subnet_id
+  route_table_id = each.value.route_table_id
+}

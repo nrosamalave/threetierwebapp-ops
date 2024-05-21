@@ -23,7 +23,7 @@ variable "region" {
 
 variable "vpc_cidr" {
   description = "Cidr for the vpc"
-  default = "172.20.0.0/20"
+  default     = "172.20.0.0/20"
 }
 
 # Subnet Variables
@@ -33,7 +33,7 @@ variable "vpc_cidr" {
 # description = "Public Web Subnet CIDR values"
 # default     = ["172.20.1.0/24", "172.20.2.0/24", "172.20.3.0/24"]
 #}
- 
+
 #variable "private_subnet_cidrs_app" {
 # type        = list(string)
 # description = "Private App Subnet CIDR values"
@@ -63,7 +63,7 @@ variable "public_subnet_cidrs_web" {
 # Availability Zones
 
 variable "azs" {
-  type = list(string)
+  type        = list(string)
   description = "Availability Zones"
-  default = ["us-east-1a", "us-east-1b", "us-east-1c"]
+  default     = ["us-east-1a", "us-east-1b", "us-east-1c"]
 }
