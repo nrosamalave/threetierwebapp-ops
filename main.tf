@@ -97,7 +97,8 @@ resource "aws_route_table" "app" {
   vpc_id = aws_vpc.my-vpc.id
 
   route = {
-    cidr_block = 0.0.0.0/0
+    type = string
+    cidr_block = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.my-nat-gw
   }
 
@@ -110,7 +111,8 @@ resource "aws_route_table" "db" {
   vpc_id = aws_vpc.my-vpc.id
 
   route = {
-    cidr_block = 0.0.0.0/0
+    type = string
+    cidr_block = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.my-nat-gw
   }
 
