@@ -43,3 +43,22 @@ resource "aws_subnet" "public-db" {
     Name = "db-subnet-${each.key}"
   }
 }
+
+# Route Tables
+
+resource "aws_route_table" "web" {
+  vpc_id = aws_vpc.my-vpc.id
+
+  route = []
+
+  tags = {
+    Name = "public-web-rt"
+  }
+}
+
+# Route Table Association
+
+resource "aws_route_table_association" "web-rt-asso" {
+  subnet_id      = aws_subnet.public-web.id
+  route_table_id = aws_route_table.web.id
+}
