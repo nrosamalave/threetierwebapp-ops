@@ -82,40 +82,43 @@ resource "aws_subnet" "private-db" {
 resource "aws_route_table" "web" {
   vpc_id = aws_vpc.my-vpc.id
 
-  route = {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.my-igw.id
-  }
-
   tags = {
     Name = "public-web-rt"
   }
 }
 
+resource "aws_route" "public_web_route" {                    // route for "web" rt
+  route_table_id         = aws_route_table.web.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.my-igw.id
+}
+
 resource "aws_route_table" "app" {
   vpc_id = aws_vpc.my-vpc.id
-
-  route = {
-    cidr_block = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.my-nat-gw
-  }
 
   tags = {
     Name = "private-app-rt"
   }
 }
 
+resource "aws_route" "private_app_route" {                    // route for "app" rt
+  route_table_id         = aws_route_table.app.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id = aws_nat_gateway.my-nat-gw
+}
+
 resource "aws_route_table" "db" {
   vpc_id = aws_vpc.my-vpc.id
-
-  route = {
-    cidr_block = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.my-nat-gw
-  }
 
   tags = {
     Name = "private-db-rt"
   }
+}
+
+resource "aws_route" "private_db_route" {                    // route for "db" rt
+  route_table_id         = aws_route_table.db.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id = aws_nat_gateway.my-nat-gw
 }
 
 # Route Table Association
