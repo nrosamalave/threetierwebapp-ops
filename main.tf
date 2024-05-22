@@ -84,7 +84,7 @@ resource "aws_route_table" "web" {
 
   route = {
     type = string
-    cidr_block = "0.0.0.0/0"
+    cidr_block = 0.0.0.0/0
     gateway_id = aws_internet_gateway.my-igw.id
   }
 
@@ -98,7 +98,7 @@ resource "aws_route_table" "app" {
 
   route = {
     type = string
-    cidr_block = "0.0.0.0/0"
+    cidr_block = 0.0.0.0/0
     nat_gateway_id = aws_nat_gateway.my-nat-gw
   }
 
@@ -112,7 +112,7 @@ resource "aws_route_table" "db" {
 
   route = {
     type = string
-    cidr_block = "0.0.0.0/0"
+    cidr_block = 0.0.0.0/0
     nat_gateway_id = aws_nat_gateway.my-nat-gw
   }
 
