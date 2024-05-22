@@ -82,10 +82,10 @@ resource "aws_subnet" "private-db" {
 resource "aws_route_table" "web" {
   vpc_id = aws_vpc.my-vpc.id
 
-  route = [
+  route = {
     cidr_block = 0.0.0.0/0
     gateway_id = aws_internet_gateway.my-igw.id
-  ]
+  }
 
   tags = {
     Name = "public-web-rt"
@@ -95,10 +95,10 @@ resource "aws_route_table" "web" {
 resource "aws_route_table" "app" {
   vpc_id = aws_vpc.my-vpc.id
 
-  route = [
+  route = {
     cidr_block = 0.0.0.0/0
     nat_gateway_id = aws_nat_gateway.my-nat-gw
-  ]
+  }
 
   tags = {
     Name = "private-app-rt"
@@ -108,10 +108,10 @@ resource "aws_route_table" "app" {
 resource "aws_route_table" "db" {
   vpc_id = aws_vpc.my-vpc.id
 
-  route = [
+  route = {
     cidr_block = 0.0.0.0/0
     nat_gateway_id = aws_nat_gateway.my-nat-gw
-  ]
+  }
 
   tags = {
     Name = "private-db-rt"
