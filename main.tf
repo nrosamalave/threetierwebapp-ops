@@ -59,6 +59,7 @@ resource "aws_route_table" "web" {
 # Route Table Association
 
 resource "aws_route_table_association" "web-rt-asso" {
-  subnet_id      = aws_subnet.public-web.id
+  for_each       = aws_subnet.public-web
+  subnet_id      = each.value
   route_table_id = aws_route_table.web.id
 }
