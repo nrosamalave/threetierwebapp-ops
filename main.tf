@@ -104,7 +104,7 @@ resource "aws_route_table" "app" {
 resource "aws_route" "private_app_route" {                    // route for "app" rt
   route_table_id         = aws_route_table.app.id
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id = aws_nat_gateway.my-nat-gw
+  nat_gateway_id = aws_nat_gateway.my-nat-gw.id
 }
 
 resource "aws_route_table" "db" {
@@ -118,7 +118,7 @@ resource "aws_route_table" "db" {
 resource "aws_route" "private_db_route" {                    // route for "db" rt
   route_table_id         = aws_route_table.db.id
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id = aws_nat_gateway.my-nat-gw
+  nat_gateway_id = aws_nat_gateway.my-nat-gw.id
 }
 
 # Route Table Association
