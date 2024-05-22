@@ -20,7 +20,7 @@ resource "aws_subnet" "public-web" {
   }
 }
 
-resource "aws_subnet" "public-app" {
+resource "aws_subnet" "private-app" {
   for_each = { for idx, subnet in local.subnets.app : idx => subnet }
 
   vpc_id            = aws_vpc.my-vpc.id
@@ -32,7 +32,7 @@ resource "aws_subnet" "public-app" {
   }
 }
 
-resource "aws_subnet" "public-db" {
+resource "aws_subnet" "private-db" {
   for_each = { for idx, subnet in local.subnets.db : idx => subnet }
 
   vpc_id            = aws_vpc.my-vpc.id
@@ -56,10 +56,42 @@ resource "aws_route_table" "web" {
   }
 }
 
+resource "aws_route_table" "app" {
+  vpc_id = aws_vpc.my-vpc.id
+
+  route = []
+
+  tags = {
+    Name = "private-app-rt"
+  }
+}
+
+resource "aws_route_table" "db" {
+  vpc_id = aws_vpc.my-vpc.id
+
+  route = []
+
+  tags = {
+    Name = "private-db-rt"
+  }
+}
+
 # Route Table Association
 
 resource "aws_route_table_association" "web-rt-asso" {
   for_each       = aws_subnet.public-web
   subnet_id      = each.value.id
   route_table_id = aws_route_table.web.id
+}
+
+resource "aws_route_table_association" "app-rt-asso" {
+  for_each       = aws_subnet.private-app
+  subnet_id      = each.value.id
+  route_table_id = aws_route_table.app.id
+}
+
+resource "aws_route_table_association" "db-rt-asso" {
+  for_each       = aws_subnet.private-db
+  subnet_id      = each.value.id
+  route_table_id = aws_route_table.db.id
 }
