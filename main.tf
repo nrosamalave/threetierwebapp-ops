@@ -10,7 +10,7 @@ resource "aws_vpc" "my-vpc" {
 # Elastic IP
 
 resource "aws_eip" "nat_eip" {
-  vpc = true
+  domain = "vpc"
 
   tags = {
     Name = "nat-eip"
@@ -30,8 +30,9 @@ resource "aws_internet_gateway" "my-igw" {
 # NAT Gateway
 
 resource "aws_nat_gateway" "my-nat-gw" {
+  for_each       = aws_subnet.public-web
   allocation_id = aws_eip.nat_eip.id
-  subnet_id     = aws_subnet.public-web.id
+  subnet_id     = each.value.id
 
   tags = {
     Name = "my-nat-gw"
