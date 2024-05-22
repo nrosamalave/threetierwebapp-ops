@@ -7,6 +7,38 @@ resource "aws_vpc" "my-vpc" {
   }
 }
 
+# Elastic IP
+
+resource "aws_eip" "nat_eip" {
+  vpc = true
+
+  tags = {
+    Name = "nat-eip"
+  }
+}
+
+# Internet Gateway
+
+resource "aws_internet_gateway" "my-igw" {
+  vpc_id = aws_vpc.my-vpc.id
+
+  tags = {
+    Name = "my-igw"
+  }
+}
+
+# NAT Gateway
+
+resource "aws_nat_gateway" "my-nat-gw" {
+  allocation_id = aws_eip.nat_eip.id
+  subnet_id     = aws_subnet.public-web.id
+
+  tags = {
+    Name = "my-nat-gw"
+  }
+
+}
+
 # Create subnets
 resource "aws_subnet" "public-web" {
   for_each = { for idx, subnet in local.subnets.web : idx => subnet }
