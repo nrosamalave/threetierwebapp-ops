@@ -161,6 +161,22 @@ resource "aws_security_group" "jump-server" {
   }
 }
 
+resource "aws_security_group" "php-sg" {
+  description = "Allow SSH from the jump server"
+  vpc_id      = aws_vpc.my-vpc.id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    security_groups = [aws_security_group.jump-server.id]
+  }
+
+  tags = {
+    Name = "my-php-sg"
+  }
+}
+
 # Key Pair
 resource "aws_key_pair" "aws-key" {
   key_name   = "aws-key"
@@ -180,12 +196,13 @@ resource "aws_key_pair" "aws-key" {
 #   associate_public_ip_address = true
 # }
 
-resource "aws_instance" "jump-server" {
-  ami                         = local.ec2.jumpserver.ami
-  instance_type               = local.ec2.jumpserver.instance_type
-  security_groups             = local.ec2.jumpserver.security_groups
-  subnet_id                   = local.ec2.jumpserver.subnet_id
-  tenancy                     = local.ec2.jumpserver.tenancy
-  key_name                    = local.ec2.jumpserver.key_name
+resource "aws_instance" "instances" {
+  for_each                    = local.instances
+  ami                         = each.value.ami
+  instance_type               = each.value.instance_type
+  security_groups             = each.value.security_groups
+  subnet_id                   = each.value.subnet_id
+  tenancy                     = each.value.tenancy
+  key_name                    = each.value.key_name
   associate_public_ip_address = true
 }
