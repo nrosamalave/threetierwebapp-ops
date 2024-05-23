@@ -5,7 +5,7 @@ locals {
     jumpserver = {
       ami             = "ami-04ff98ccbfa41c9ad"
       instance_type   = "t2.micro"
-      security_groups = "[aws_security_group.jump-server.id]"
+      #security_groups = "[aws_security_group.jump-server.id]"
       subnet_id = aws_subnet.public-web["0"].id
       tenancy     = "default"
       volume_type = "gp2"

@@ -166,7 +166,7 @@ resource "aws_instance" "jump-server" {
   for_each                    = local.ec2.jumpserver
   ami                         = each.key
   instance_type               = each.key
-  security_groups             = each.key
+  security_groups             = [aws_security_group.jump-server.id]
   subnet_id                   = each.key
   tenancy                     = each.key
   key_name                    = each.key
