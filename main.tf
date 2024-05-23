@@ -181,7 +181,7 @@ resource "aws_key_pair" "aws-key" {
 # }
 
 resource "aws_instance" "jump-server" {
-  for_each                    = { for key, value in local.ec2.jumpserver }
+  for_each                    = { for key, value in local.ec2.jumpserver : key => value }
   ami                         = each.value.ami
   instance_type               = each.value.instance_type
   security_groups             = each.value.security_groups
