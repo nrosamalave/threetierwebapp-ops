@@ -164,12 +164,12 @@ resource "aws_key_pair" "aws-key" {
 
 resource "aws_instance" "jump-server" {
   for_each                    = local.ec2.jumpserver
-  ami                         = each.ami
-  instance_type               = each.instance_type
+  ami                         = each.key
+  instance_type               = each.key
   security_groups             = "aws_subnet.public-web[0].id"
-  subnet_id                   = each.subnet_id
-  tenancy                     = each.tenancy
-  volume_type                 = each.volume_type
-  key_name                    = each.aws-key
+  subnet_id                   = each.key
+  tenancy                     = each.key
+  volume_type                 = each.key
+  key_name                    = each.key
   associate_public_ip_address = true
 }
