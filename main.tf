@@ -180,7 +180,7 @@ resource "aws_security_group" "php-sg" {
 # Key Pair
 resource "aws_key_pair" "aws-key" {
   key_name   = "aws-key"
-  public_key = file("/home/malavear/.ssh/php_key_pair.pub")
+  public_key = file("~/home/malavear/.ssh/php_key_pair.pub")
 }
 
 # EC2
