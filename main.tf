@@ -153,7 +153,7 @@ resource "aws_security_group" "jump-server" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["174.179.163.53/32"] # Allow SSH from anywhere (consider restricting this to specific IPs for security)
+    cidr_blocks = ["0.0.0.0/0"] # Allow SSH from anywhere (consider restricting this to specific IPs for security)
   }
 
   tags = {
