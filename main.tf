@@ -163,7 +163,7 @@ resource "aws_key_pair" "aws-key" {
 # EC2
 
 resource "aws_instance" "jump-server" {
-  for_each                    = local.ec2.jumpserver
+  #for_each                    = local.ec2.jumpserver
   ami                         = "ami-04ff98ccbfa41c9ad"
   instance_type               = "t2.micro"
   security_groups             = [aws_security_group.jump-server.id]
