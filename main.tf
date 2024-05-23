@@ -166,10 +166,9 @@ resource "aws_instance" "jump-server" {
   for_each                    = local.ec2.jumpserver
   ami                         = each.key
   instance_type               = each.key
-  security_groups             = "aws_subnet.public-web[0].id"
+  security_groups             = aws_subnet.public-web["0"].id
   subnet_id                   = each.key
   tenancy                     = each.key
-  volume_type                 = each.key
   key_name                    = each.key
   associate_public_ip_address = true
 }
