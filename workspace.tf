@@ -8,7 +8,7 @@ locals {
       security_groups = [aws_security_group.jump-server.id]
       subnet_id = aws_subnet.public-web["0"].id
       tenancy     = "default"
-      key_name    = "aws-key"
+      key_name    = aws_key_pair.aws-key.key_name
       associate_public_ip_address = "true"
     }
 
@@ -18,7 +18,7 @@ locals {
       security_groups = [aws_security_group.php-sg.id]
       subnet_id = aws_subnet.private-app["0"].id
       tenancy     = "default"
-      key_name    = "aws-key"
+      key_name    = aws_key_pair.aws-key.key_name
       associate_public_ip_address = "false"
     }
 
@@ -28,7 +28,7 @@ locals {
       security_groups = [aws_security_group.php-sg.id]
       subnet_id = aws_subnet.private-app["1"].id
       tenancy     = "default"
-      key_name    = "aws-key"
+      key_name    = aws_key_pair.aws-key.key_name
       associate_public_ip_address = "false"
     }
   }
