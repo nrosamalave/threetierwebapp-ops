@@ -142,3 +142,34 @@ resource "aws_route_table_association" "db-rt-asso" {
   subnet_id      = each.value.id
   route_table_id = aws_route_table.db.id
 }
+
+# Security Groups
+
+resource "aws_security_group" "jump-server" {
+  description = "Jump server sg"
+  vpc_id      = aws_vpc.my-vpc.id
+
+  tags = {
+    Name = "my-jump-server-sg"
+  }
+}
+
+# Key Pair
+resource "aws_key_pair" "aws-key" {
+  key_name   = "aws-key"
+  public_key = var.key_pair
+}
+
+# EC2
+
+resource "aws_instance" "jump-server" {
+  for_each                    = local.ec2.jumpserver
+  ami                         = each.ami
+  instance_type               = each.instance_type
+  security_groups             = each.security_groups
+  subnet_id                   = each.subnet_id
+  tenancy                     = each.tenancy
+  volume_type                 = each.volume_type
+  key_name                    = each.aws-key
+  associate_public_ip_address = true
+}
