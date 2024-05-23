@@ -3,13 +3,13 @@ locals {
 
   ec2 = {
     jumpserver = {
-      ami = "ami-04ff98ccbfa41c9ad"
-      instance_type = "t2.micro"
+      ami             = "ami-04ff98ccbfa41c9ad"
+      instance_type   = "t2.micro"
       security_groups = "jump-server"
-      subnet_id = "aws_subnet.public-web["0"].id"
-      tenancy = "default"
+      #      subnet_id = "aws_subnet.public-web["0"].id"
+      tenancy     = "default"
       volume_type = "gp2"
-      key_name = "aws-key"
+      key_name    = "aws-key"
     }
   }
 
