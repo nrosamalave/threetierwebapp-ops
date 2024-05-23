@@ -19,7 +19,7 @@ variable "region" {
   }
 }
 
-variable "php_key_pair_pub" {
+variable "php_key" {
   description = "The public key to be used for SSH access"
   type        = string
   sensitive   = true
