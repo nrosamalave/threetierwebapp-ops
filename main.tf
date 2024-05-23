@@ -207,6 +207,6 @@ resource "aws_instance" "instances" {
   associate_public_ip_address = true
 
   tags = {
-    name = ${each.key}
+    name = each.key
   }
 }
