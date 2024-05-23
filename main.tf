@@ -29,20 +29,9 @@ resource "aws_internet_gateway" "my-igw" {
 
 # NAT Gateway
 
-# resource "aws_nat_gateway" "my-nat-gw" {
-#   for_each       = aws_subnet.public-web
-#   allocation_id = aws_eip.nat_eip.id
-#   subnet_id     = each.value.id
-
-#   tags = {
-#     Name = "my-nat-gw"
-#   }
-
-# }
-
 resource "aws_nat_gateway" "my-nat-gw" {
   allocation_id = aws_eip.nat_eip.id
-  subnet_id     = aws_subnet.public-web["0"].id  # Assuming the first public subnet
+  subnet_id     = aws_subnet.public-web["0"].id // Assuming the first public subnet
 
   tags = {
     Name = "my-nat-gw"
@@ -98,24 +87,12 @@ resource "aws_route_table" "web" {
   }
 }
 
-resource "aws_route" "public_web_route" {                    // route for "web" rt
-  route_table_id         = aws_route_table.web.id
-  destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = aws_internet_gateway.my-igw.id
-}
-
 resource "aws_route_table" "app" {
   vpc_id = aws_vpc.my-vpc.id
 
   tags = {
     Name = "private-app-rt"
   }
-}
-
-resource "aws_route" "private_app_route" {                    // route for "app" rt
-  route_table_id         = aws_route_table.app.id
-  destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id = aws_nat_gateway.my-nat-gw.id
 }
 
 resource "aws_route_table" "db" {
@@ -126,10 +103,24 @@ resource "aws_route_table" "db" {
   }
 }
 
-resource "aws_route" "private_db_route" {                    // route for "db" rt
+# Routes
+
+resource "aws_route" "public_web_route" {
+  route_table_id         = aws_route_table.web.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.my-igw.id
+}
+
+resource "aws_route" "private_app_route" {
+  route_table_id         = aws_route_table.app.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.my-nat-gw.id
+}
+
+resource "aws_route" "private_db_route" {
   route_table_id         = aws_route_table.db.id
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id = aws_nat_gateway.my-nat-gw.id
+  nat_gateway_id         = aws_nat_gateway.my-nat-gw.id
 }
 
 # Route Table Association
