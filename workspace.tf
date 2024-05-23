@@ -9,6 +9,7 @@ locals {
       subnet_id = aws_subnet.public-web["0"].id
       tenancy     = "default"
       key_name    = "aws-key"
+      associate_public_ip_address = "true"
     }
 
     php-app-1 = {
@@ -18,6 +19,7 @@ locals {
       subnet_id = aws_subnet.private-app["0"].id
       tenancy     = "default"
       key_name    = "aws-key"
+      associate_public_ip_address = "false"
     }
 
     php-app-2 = {
@@ -27,6 +29,7 @@ locals {
       subnet_id = aws_subnet.private-app["1"].id
       tenancy     = "default"
       key_name    = "aws-key"
+      associate_public_ip_address = "false"
     }
   }
 

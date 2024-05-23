@@ -204,7 +204,7 @@ resource "aws_instance" "instances" {
   subnet_id                   = each.value.subnet_id
   tenancy                     = each.value.tenancy
   key_name                    = each.value.key_name
-  associate_public_ip_address = true
+  associate_public_ip_address = each.value.associate_public_ip_address
 
   tags = {
     name = each.key
