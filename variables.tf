@@ -18,3 +18,9 @@ variable "region" {
     error_message = "Invalid AWS region: us-east-1, us-east-2"
   }
 }
+
+variable "public_key" {
+  description = "The public key to be used for SSH access"
+  type        = string
+  sensitive   = true
+}
