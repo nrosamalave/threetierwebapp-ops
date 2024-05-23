@@ -8,7 +8,6 @@ locals {
       #security_groups = "[aws_security_group.jump-server.id]"
       subnet_id = aws_subnet.public-web["0"].id
       tenancy     = default
-      volume_type = gp2
       key_name    = aws-key
     }
   }
