@@ -181,11 +181,11 @@ resource "aws_key_pair" "aws-key" {
 # }
 
 resource "aws_instance" "jump-server" {
-  ami                         = local.ami
-  instance_type               = local.instance_type
-  security_groups             = local.security_groups
-  subnet_id                   = local.subnet_id
-  tenancy                     = local.tenancy
-  key_name                    = local.key_name
+  ami                         = local.ec2.jumpserver.ami
+  instance_type               = local.ec2.jumpserver.instance_type
+  security_groups             = local.ec2.jumpserver.security_groups
+  subnet_id                   = local.ec2.jumpserver.subnet_id
+  tenancy                     = local.ec2.jumpserver.tenancy
+  key_name                    = local.ec2.jumpserver.key_name
   associate_public_ip_address = true
 }
