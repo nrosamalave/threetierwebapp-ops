@@ -164,11 +164,11 @@ resource "aws_key_pair" "aws-key" {
 
 resource "aws_instance" "jump-server" {
   for_each                    = local.ec2.jumpserver
-  ami                         = each.value.ami
-  instance_type               = each.value.instance_type
+  ami                         = "ami-04ff98ccbfa41c9ad"
+  instance_type               = "t2.micro"
   security_groups             = [aws_security_group.jump-server.id]
-  subnet_id                   = each.value.subnet_id
-  tenancy                     = each.value.tenancy
-  key_name                    = each.value.key_name
+  subnet_id                   = aws_subnet.public-web["0"].id
+  tenancy                     = "default"
+  key_name                    = "aws-key"
   associate_public_ip_address = true
 }
