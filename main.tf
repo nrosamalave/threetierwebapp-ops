@@ -205,4 +205,8 @@ resource "aws_instance" "instances" {
   tenancy                     = each.value.tenancy
   key_name                    = each.value.key_name
   associate_public_ip_address = true
+
+  tags = {
+    name = each.key
+  }
 }
