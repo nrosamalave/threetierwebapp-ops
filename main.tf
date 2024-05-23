@@ -149,17 +149,16 @@ resource "aws_security_group" "jump-server" {
   description = "Jump server sg"
   vpc_id      = aws_vpc.my-vpc.id
 
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["174.179.163.53/32"] # Allow SSH from anywhere (consider restricting this to specific IPs for security)
+  }
+
   tags = {
     Name = "my-jump-server-sg"
   }
-}
-
-resource "aws_vpc_security_group_ingress_rule" "allow_ssh_ipv4" {
-  security_group_id = aws_security_group.jump-server.id
-  cidr_ipv4         = "174.179.163.53/32"
-  from_port         = 22
-  ip_protocol       = "ssh"
-  to_port           = 22
 }
 
 # Key Pair
