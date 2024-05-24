@@ -181,7 +181,7 @@ resource "aws_security_group" "php-sg" {
 
 resource "aws_key_pair" "aws-key" {
   key_name   = "aws-key"
-  public_key = var.php_key
+  public_key = var.aws_key
 }
 
 # EC2
