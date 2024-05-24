@@ -167,7 +167,7 @@ resource "aws_security_group_rule" "ssh-access-php-sg" {
   to_port           = 22
   protocol          = "tcp"
   security_group_id = aws_security_group.jump-server.id
-  source_security_group_id   = [aws_security_group.php-sg.id]
+  source_security_group_id   = aws_security_group.php-sg.id
 }
 
 resource "aws_security_group" "php-sg" {
