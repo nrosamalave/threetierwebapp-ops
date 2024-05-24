@@ -185,17 +185,6 @@ resource "aws_key_pair" "aws-key" {
 
 # EC2
 
-# resource "aws_instance" "jump-server" {
-#   for_each                    = local.ec2.jumpserver
-#   ami                         = "ami-04ff98ccbfa41c9ad"
-#   instance_type               = "t2.micro"
-#   security_groups             = [aws_security_group.jump-server.id]
-#   subnet_id                   = aws_subnet.public-web["0"].id
-#   tenancy                     = "default"
-#   key_name                    = "aws-key"
-#   associate_public_ip_address = true
-# }
-
 resource "aws_instance" "instances" {
   for_each                    = local.instances
   ami                         = each.value.ami
