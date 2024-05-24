@@ -24,9 +24,3 @@ variable "php_key" {
   type        = string
   sensitive   = true
 }
-
-variable "jump-key" {
-  description = "The public key to be used for SSH access"
-  type        = string
-  sensitive   = true
-}
