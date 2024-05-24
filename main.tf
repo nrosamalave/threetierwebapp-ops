@@ -210,7 +210,7 @@ resource "aws_instance" "instances" {
   }
   lifecycle {
     ignore_changes = [
-      aws_security_group.jump-server, aws_security_group.ssh-access-php-sg
+      aws_security_group.jump-server.id, aws_security_group.ssh-access-php-sg.id
     ]
   }
 }
