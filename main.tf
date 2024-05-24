@@ -208,4 +208,9 @@ resource "aws_instance" "instances" {
   tags = {
     name = each.key
   }
+  lifecycle {
+    ignore_changes = [
+      aws_security_group.jump-server, aws_security_group.ssh-access-php-sg
+    ]
+  }
 }
