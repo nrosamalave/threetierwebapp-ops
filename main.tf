@@ -156,16 +156,18 @@ resource "aws_security_group" "jump-server" {
     cidr_blocks = ["0.0.0.0/0"] # Allow SSH from anywhere (consider restricting this to specific IPs for security)
   }
 
-  egress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    security_groups = [aws_security_group.php-sg.id]
-  }
-
   tags = {
     Name = "my-jump-server-sg"
   }
+}
+
+resource "aws_security_group_rule" "ssh-access-php-sg" {
+  type              = "egress"
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+  security_group_id = aws_security_group.jump-server.id
+  security_groups   = [aws_security_group.php-sg.id]
 }
 
 resource "aws_security_group" "php-sg" {
@@ -173,9 +175,9 @@ resource "aws_security_group" "php-sg" {
   vpc_id      = aws_vpc.my-vpc.id
 
   ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
     security_groups = [aws_security_group.jump-server.id]
   }
 

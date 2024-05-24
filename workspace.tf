@@ -3,32 +3,32 @@ locals {
 
   instances = {
     jumpserver = {
-      ami             = "ami-04ff98ccbfa41c9ad"
-      instance_type   = "t2.micro"
-      security_groups = [aws_security_group.jump-server.id]
-      subnet_id = aws_subnet.public-web["0"].id
-      tenancy     = "default"
-      key_name    = aws_key_pair.aws-key.key_name
+      ami                         = "ami-04ff98ccbfa41c9ad"
+      instance_type               = "t2.micro"
+      security_groups             = [aws_security_group.jump-server.id]
+      subnet_id                   = aws_subnet.public-web["0"].id
+      tenancy                     = "default"
+      key_name                    = aws_key_pair.aws-key.key_name
       associate_public_ip_address = "true"
     }
 
     php-app-1 = {
-      ami             = "ami-04ff98ccbfa41c9ad"
-      instance_type   = "t2.micro"
-      security_groups = [aws_security_group.php-sg.id]
-      subnet_id = aws_subnet.private-app["0"].id
-      tenancy     = "default"
-      key_name    = aws_key_pair.aws-key.key_name
+      ami                         = "ami-04ff98ccbfa41c9ad"
+      instance_type               = "t2.micro"
+      security_groups             = [aws_security_group.php-sg.id]
+      subnet_id                   = aws_subnet.private-app["0"].id
+      tenancy                     = "default"
+      key_name                    = aws_key_pair.aws-key.key_name
       associate_public_ip_address = "false"
     }
 
     php-app-2 = {
-      ami             = "ami-04ff98ccbfa41c9ad"
-      instance_type   = "t2.micro"
-      security_groups = [aws_security_group.php-sg.id]
-      subnet_id = aws_subnet.private-app["1"].id
-      tenancy     = "default"
-      key_name    = aws_key_pair.aws-key.key_name
+      ami                         = "ami-04ff98ccbfa41c9ad"
+      instance_type               = "t2.micro"
+      security_groups             = [aws_security_group.php-sg.id]
+      subnet_id                   = aws_subnet.private-app["1"].id
+      tenancy                     = "default"
+      key_name                    = aws_key_pair.aws-key.key_name
       associate_public_ip_address = "false"
     }
   }
