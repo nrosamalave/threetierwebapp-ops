@@ -305,7 +305,7 @@ resource "aws_lb_target_group" "php-target-group" {
 resource "aws_lb_target_group_attachment" "php-targets" {
   for_each          = local.php_app_instances
   target_group_arn  = aws_lb_target_group.php-target-group.arn
-  target_id         = ["each.value"]
+  target_id         = each.value.id
   port              = 80
 }
 
