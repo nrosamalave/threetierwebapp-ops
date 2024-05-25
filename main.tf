@@ -163,12 +163,12 @@ resource "aws_security_group" "jump-server" {
 }
 
 resource "aws_security_group_rule" "ssh-access-php-sg" {
-  type              = "egress"
-  from_port         = 22
-  to_port           = 22
-  protocol          = "tcp"
-  security_group_id = aws_security_group.jump-server.id
-  source_security_group_id   = aws_security_group.php-sg.id
+  type                     = "egress"
+  from_port                = 22
+  to_port                  = 22
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.jump-server.id
+  source_security_group_id = aws_security_group.php-sg.id
 }
 
 resource "aws_security_group" "php-sg" {
@@ -190,17 +190,17 @@ resource "aws_security_group" "php-sg" {
   }
 
   egress {
-    from_port       = 80
-    to_port         = 80
-    protocol        = "tcp"
-    cidr_blocks     = ["0.0.0.0/0"]
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
-    from_port       = 443
-    to_port         = 443
-    protocol        = "tcp"
-    cidr_blocks     = ["0.0.0.0/0"]
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
@@ -228,6 +228,25 @@ resource "aws_security_group" "alb-sg" {
   tags = {
     Name = "alb-sg"
   }
+}
+
+resource "aws_security_group" "rds-sg" {
+  name        = "rds-sg"
+  description = "Security group for RDS"
+  vpc_id = aws_vpc.my-vpc.id 
+
+  tags = {
+    Name = "rds-sg"
+  }
+}
+
+resource "aws_security_group_rule" "rds-ingress" {
+  type              = "ingress"
+  from_port         = 3306
+  to_port           = 3306
+  protocol          = "tcp"
+  security_group_id = aws_security_group.rds-sg.id
+  security_groups = [aws_security_group.php-sg.id]
 }
 
 # Key Pair
@@ -301,10 +320,10 @@ resource "aws_lb_target_group" "php-target-group" {
 }
 
 resource "aws_lb_target_group_attachment" "php-targets" {
-  for_each          = local.php_app_instances
-  target_group_arn  = aws_lb_target_group.php-target-group.arn
-  target_id         = each.value.id
-  port              = 80
+  for_each         = local.php_app_instances
+  target_group_arn = aws_lb_target_group.php-target-group.arn
+  target_id        = each.value.id
+  port             = 80
 }
 
 # ALB Listeners
@@ -322,7 +341,7 @@ resource "aws_lb_listener" "http" {
 # Subnet Groups
 
 resource "aws_db_subnet_group" "db-subnet-group" {
-  name       = "db-subnet-group"
+  name = "db-subnet-group"
   subnet_ids = [
     aws_subnet.private-db["0"].id, // Subnet in us-east-1a
     aws_subnet.private-db["1"].id, // Subnet in us-east-1b
@@ -331,4 +350,20 @@ resource "aws_db_subnet_group" "db-subnet-group" {
   tags = {
     Name = "db-subnet-group"
   }
+}
+
+# Create RDS MySQL instance
+resource "aws_db_instance" "my-db" {
+  identifier             = local.rds.identifier
+  engine                 = local.rds.engine
+  engine_version         = local.rds.engine_version
+  instance_class         = local.rds.instance_class
+  allocated_storage      = local.rds.allocated_storage
+  storage_type           = local.rds.storage_type
+  username               = local.rds.username
+  password               = local.rds.password
+  db_subnet_group_name   = local.rds.subnet_group_name
+  publicly_accessible    = local.rds.publicly_accessible
+  skip_final_snapshot    = local.rds.skip_final_snapshot
+  vpc_security_group_ids = local.rds.vpc_security_group_ids
 }
