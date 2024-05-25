@@ -52,7 +52,7 @@ locals {
   }
 
   php_app_instances = {
-    for k, v in aws_instance.instances : k => v.id
+    for k, v in aws_instance.instances : k => v
     if k == "php-app-1" || k == "php-app-2"
   }
 }
