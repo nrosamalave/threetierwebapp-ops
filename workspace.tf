@@ -50,4 +50,9 @@ locals {
       { cidr = "10.0.9.0/24", az = "us-east-1c" },
     ]
   }
+  
+  php_app_instances = {
+    for k, v in local.instances : k => v
+    if k == "php-app-1" || k == "php-app-2"
+  }
 }

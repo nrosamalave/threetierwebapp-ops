@@ -40,7 +40,8 @@ resource "aws_nat_gateway" "my-nat-gw" {
   depends_on = [aws_internet_gateway.my-igw]
 }
 
-# Create subnets
+# Create Subnets
+
 resource "aws_subnet" "public-web" {
   for_each = { for idx, subnet in local.subnets.web : idx => subnet }
 
@@ -181,6 +182,13 @@ resource "aws_security_group" "php-sg" {
     security_groups = [aws_security_group.jump-server.id]
   }
 
+  ingress {
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
+    security_groups = [aws_security_group.alb-sg.id]
+  }
+
   egress {
     from_port       = 80
     to_port         = 80
@@ -200,8 +208,34 @@ resource "aws_security_group" "php-sg" {
   }
 }
 
+resource "aws_security_group" "alb-sg" {
+  vpc_id = aws_vpc.my-vpc.id
 
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "alb-sg"
+  }
+}
 
 # Key Pair
 
@@ -229,5 +263,60 @@ resource "aws_instance" "instances" {
     ignore_changes = [
       security_groups
     ]
+  }
+}
+
+# Application Load Balancer
+
+resource "aws_lb" "my-alb" {
+  name               = "my-alb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.alb-sg.id]
+  subnets            = [aws_subnet.public-web["0"].id, aws_subnet.public-web["1"].id]
+
+  tags = {
+    Name = "my-alb"
+  }
+}
+
+# Target Groups
+
+resource "aws_lb_target_group" "php-target-group" {
+  name     = "php-target-group"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = aws_vpc.my-vpc.id
+
+  health_check {
+    path                = "/"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 5
+    unhealthy_threshold = 2
+    matcher             = "200"
+  }
+
+  tags = {
+    Name = "php-target-group"
+  }
+}
+
+resource "aws_lb_target_group_attachment" "php-targets" {
+  for_each          = local.php_app_instances
+  target_group_arn  = aws_lb_target_group.php-target-group.arn
+  target_id         = each.value.id
+  port              = 80
+}
+
+# ALB Listeners
+
+resource "aws_lb_listener" "http" {
+  load_balancer_arn = aws_lb.my-alb.arn
+  port              = 80
+  protocol          = "HTTP"
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.php-target-group.arn
   }
 }
