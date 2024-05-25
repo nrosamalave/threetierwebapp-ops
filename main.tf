@@ -218,13 +218,6 @@ resource "aws_security_group" "alb-sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   egress {
     from_port   = 0
     to_port     = 0
@@ -278,6 +271,11 @@ resource "aws_lb" "my-alb" {
   tags = {
     Name = "my-alb"
   }
+  lifecycle {
+    ignore_changes = [
+      security_groups
+    ]
+  }
 }
 
 # Target Groups
@@ -318,5 +316,19 @@ resource "aws_lb_listener" "http" {
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.php-target-group.arn
+  }
+}
+
+# Subnet Groups
+
+resource "aws_db_subnet_group" "db-subnet-group" {
+  name       = "db-subnet-group"
+  subnet_ids = [
+    aws_subnet.private-db["0"].id, // Subnet in us-east-1a
+    aws_subnet.private-db["1"].id, // Subnet in us-east-1b
+  ]
+
+  tags = {
+    Name = "db-subnet-group"
   }
 }
