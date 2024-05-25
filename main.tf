@@ -305,6 +305,11 @@ resource "aws_lb_target_group" "php-target-group" {
   protocol = "HTTP"
   vpc_id   = aws_vpc.my-vpc.id
 
+  stickiness {
+    type           = "lb_cookie"
+    cookie_duration = 3600  // 1 day
+  }
+
   health_check {
     path                = "/"
     interval            = 30
