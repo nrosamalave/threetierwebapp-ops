@@ -246,7 +246,7 @@ resource "aws_security_group_rule" "rds-ingress" {
   to_port           = 3306
   protocol          = "tcp"
   security_group_id = aws_security_group.rds-sg.id
-  security_groups = [aws_security_group.php-sg.id]
+  source_security_group_id = aws_security_group.php-sg.id
 }
 
 # Key Pair
