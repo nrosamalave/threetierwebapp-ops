@@ -146,115 +146,115 @@ resource "aws_route_table_association" "db-rt-asso" {
 
 # Security Groups
 
-# resource "aws_security_group" "jump-server" {
-#   description = "Jump server sg"
-#   vpc_id      = aws_vpc.my-vpc.id
+resource "aws_security_group" "jump-server" {
+  description = "Jump server sg"
+  vpc_id      = aws_vpc.my-vpc.id
 
-#   ingress {
-#     from_port   = 22
-#     to_port     = 22
-#     protocol    = "tcp"
-#     cidr_blocks = ["0.0.0.0/0"] # Allow SSH from anywhere (consider restricting this to specific IPs for security)
-#   }
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # Allow SSH from anywhere (consider restricting this to specific IPs for security)
+  }
 
-#   tags = {
-#     Name = "my-jump-server-sg"
-#   }
-# }
+  tags = {
+    Name = "my-jump-server-sg"
+  }
+}
 
-# resource "aws_security_group_rule" "ssh-access-php-sg" {
-#   type                     = "egress"
-#   from_port                = 22
-#   to_port                  = 22
-#   protocol                 = "tcp"
-#   security_group_id        = aws_security_group.jump-server.id
-#   source_security_group_id = aws_security_group.php-sg.id
-# }
+resource "aws_security_group_rule" "ssh-access-php-sg" {
+  type                     = "egress"
+  from_port                = 22
+  to_port                  = 22
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.jump-server.id
+  source_security_group_id = aws_security_group.php-sg.id
+}
 
-# resource "aws_security_group" "php-sg" {
-#   description = "Allow SSH from the jump server"
-#   vpc_id      = aws_vpc.my-vpc.id
+resource "aws_security_group" "php-sg" {
+  description = "Allow SSH from the jump server"
+  vpc_id      = aws_vpc.my-vpc.id
 
-#   ingress {
-#     from_port       = 22
-#     to_port         = 22
-#     protocol        = "tcp"
-#     security_groups = [aws_security_group.jump-server.id]
-#   }
+  ingress {
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    security_groups = [aws_security_group.jump-server.id]
+  }
 
-#   ingress {
-#     from_port       = 80
-#     to_port         = 80
-#     protocol        = "tcp"
-#     security_groups = [aws_security_group.alb-sg.id]
-#   }
+  ingress {
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
+    security_groups = [aws_security_group.alb-sg.id]
+  }
 
-#   egress {
-#     from_port   = 80
-#     to_port     = 80
-#     protocol    = "tcp"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
+  egress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
-#   egress {
-#     from_port   = 443
-#     to_port     = 443
-#     protocol    = "tcp"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
+  egress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
-#   egress {
-#     from_port   = 3306
-#     to_port     = 3306
-#     protocol    = "tcp"
-#     security_groups = [aws_security_group.rds-sg.id]
-#   }
+  egress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    security_groups = [aws_security_group.rds-sg.id]
+  }
 
-#   tags = {
-#     Name = "my-php-sg"
-#   }
-# }
+  tags = {
+    Name = "my-php-sg"
+  }
+}
 
-# resource "aws_security_group" "alb-sg" {
-#   vpc_id = aws_vpc.my-vpc.id
+resource "aws_security_group" "alb-sg" {
+  vpc_id = aws_vpc.my-vpc.id
 
-#   ingress {
-#     from_port   = 80
-#     to_port     = 80
-#     protocol    = "tcp"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
-#   egress {
-#     from_port   = 0
-#     to_port     = 0
-#     protocol    = "-1"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
-#   tags = {
-#     Name = "alb-sg"
-#   }
-# }
+  tags = {
+    Name = "alb-sg"
+  }
+}
 
-# resource "aws_security_group" "rds-sg" {
-#   name        = "rds-sg"
-#   description = "Security group for RDS"
-#   vpc_id = aws_vpc.my-vpc.id 
+resource "aws_security_group" "rds-sg" {
+  name        = "rds-sg"
+  description = "Security group for RDS"
+  vpc_id = aws_vpc.my-vpc.id 
 
-#   tags = {
-#     Name = "rds-sg"
-#   }
-# }
+  tags = {
+    Name = "rds-sg"
+  }
+}
 
-# resource "aws_security_group_rule" "rds-ingress" {
-#   type              = "ingress"
-#   from_port         = 3306
-#   to_port           = 3306
-#   protocol          = "tcp"
-#   security_group_id = aws_security_group.rds-sg.id
-#   source_security_group_id = aws_security_group.php-sg.id
-# }
+resource "aws_security_group_rule" "rds-ingress" {
+  type              = "ingress"
+  from_port         = 3306
+  to_port           = 3306
+  protocol          = "tcp"
+  security_group_id = aws_security_group.rds-sg.id
+  source_security_group_id = aws_security_group.php-sg.id
+}
 
 # Key Pair
 
@@ -378,101 +378,4 @@ resource "aws_db_instance" "my-db" {
   publicly_accessible    = local.rds.publicly_accessible
   skip_final_snapshot    = local.rds.skip_final_snapshot
   vpc_security_group_ids = local.rds.vpc_security_group_ids
-}
-
-# TESTING TESTING TESTING
-
-resource "aws_security_group" "jump-server" {
-  for_each    = local.security_groups.jump-server
-  description = each.value.description
-  vpc_id      = aws_vpc.my-vpc.id
-
-  dynamic "ingress" {
-    for_each = each.value.ingress
-    content {
-      from_port   = ingress.value.from_port
-      to_port     = ingress.value.to_port
-      protocol    = ingress.value.protocol
-      cidr_blocks = lookup(ingress.value, "cidr_blocks", [])
-      security_groups = lookup(ingress.value, "security_groups", [])
-    }
-  }
-
-  tags = each.value.tags
-}
-
-resource "aws_security_group" "php-sg" {
-  for_each    = local.security_groups.php-sg
-  description = each.value.description
-  vpc_id      = aws_vpc.my-vpc.id
-
-  dynamic "ingress" {
-    for_each = each.value.ingress
-    content {
-      from_port       = ingress.value.from_port
-      to_port         = ingress.value.to_port
-      protocol        = ingress.value.protocol
-      cidr_blocks     = lookup(ingress.value, "cidr_blocks", [])
-      security_groups = lookup(ingress.value, "security_groups", [])
-    }
-  }
-
-  dynamic "egress" {
-    for_each = each.value.egress
-    content {
-      from_port       = egress.value.from_port
-      to_port         = egress.value.to_port
-      protocol        = egress.value.protocol
-      cidr_blocks     = lookup(egress.value, "cidr_blocks", [])
-      security_groups = lookup(egress.value, "security_groups", [])
-    }
-  }
-
-  tags = each.value.tags
-}
-
-resource "aws_security_group" "alb-sg" {
-  for_each    = local.security_groups.alb-sg
-  description = each.value.description
-  vpc_id      = aws_vpc.my-vpc.id
-
-  dynamic "ingress" {
-    for_each = each.value.ingress
-    content {
-      from_port   = ingress.value.from_port
-      to_port     = ingress.value.to_port
-      protocol    = ingress.value.protocol
-      cidr_blocks = lookup(ingress.value, "cidr_blocks", [])
-    }
-  }
-
-  dynamic "egress" {
-    for_each = each.value.egress
-    content {
-      from_port   = egress.value.from_port
-      to_port     = egress.value.to_port
-      protocol    = egress.value.protocol
-      cidr_blocks = lookup(egress.value, "cidr_blocks", [])
-    }
-  }
-
-  tags = each.value.tags
-}
-
-resource "aws_security_group" "rds-sg" {
-  for_each    = local.security_groups.rds-sg
-  description = each.value.description
-  vpc_id      = aws_vpc.my-vpc.id
-
-  dynamic "ingress" {
-    for_each = each.value.ingress
-    content {
-      from_port       = ingress.value.from_port
-      to_port         = ingress.value.to_port
-      protocol        = ingress.value.protocol
-      security_groups = lookup(ingress.value, "security_groups", [])
-    }
-  }
-
-  tags = each.value.tags
 }
