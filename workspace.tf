@@ -51,23 +51,23 @@ locals {
     ]
   }
 
-  php_app_instances = {   // referencing php app instances
+  php_app_instances = { // referencing php app instances
     for k, v in aws_instance.instances : k => v
     if k == "php-app-1" || k == "php-app-2"
   }
 
   rds = {
-    identifier         = "my-db"
-    engine             = "mysql"
-    engine_version     = "5.7"
-    instance_class     = "db.t3.micro"
-    allocated_storage  = 20
-    storage_type       = "gp2"
-    username           = var.rds_username
-    password           = var.rds_password
-    subnet_group_name  = "db-subnet-group"
-    publicly_accessible = false
-    skip_final_snapshot = false
+    identifier             = "my-db"
+    engine                 = "mysql"
+    engine_version         = "5.7"
+    instance_class         = "db.t3.micro"
+    allocated_storage      = 20
+    storage_type           = "gp2"
+    username               = var.rds_username
+    password               = var.rds_password
+    subnet_group_name      = "db-subnet-group"
+    publicly_accessible    = false
+    skip_final_snapshot    = false
     vpc_security_group_ids = [aws_security_group.rds-sg.id]
   }
 }

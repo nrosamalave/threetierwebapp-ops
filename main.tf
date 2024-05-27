@@ -204,9 +204,9 @@ resource "aws_security_group" "php-sg" {
   }
 
   egress {
-    from_port   = 3306
-    to_port     = 3306
-    protocol    = "tcp"
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
     security_groups = [aws_security_group.rds-sg.id]
   }
 
@@ -240,7 +240,7 @@ resource "aws_security_group" "alb-sg" {
 resource "aws_security_group" "rds-sg" {
   name        = "rds-sg"
   description = "Security group for RDS"
-  vpc_id = aws_vpc.my-vpc.id 
+  vpc_id      = aws_vpc.my-vpc.id
 
   tags = {
     Name = "rds-sg"
@@ -248,11 +248,11 @@ resource "aws_security_group" "rds-sg" {
 }
 
 resource "aws_security_group_rule" "rds-ingress" {
-  type              = "ingress"
-  from_port         = 3306
-  to_port           = 3306
-  protocol          = "tcp"
-  security_group_id = aws_security_group.rds-sg.id
+  type                     = "ingress"
+  from_port                = 3306
+  to_port                  = 3306
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.rds-sg.id
   source_security_group_id = aws_security_group.php-sg.id
 }
 
@@ -313,8 +313,8 @@ resource "aws_lb_target_group" "php-target-group" {
   vpc_id   = aws_vpc.my-vpc.id
 
   stickiness {
-    type           = "lb_cookie"
-    cookie_duration = 3600  // 1 day
+    type            = "lb_cookie"
+    cookie_duration = 3600 // 1 day
   }
 
   health_check {
